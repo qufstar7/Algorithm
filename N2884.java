@@ -2,14 +2,14 @@ package BAEKJOON;
 
 import java.util.Scanner;
  
-public class Main {
+public class N2884 {
 	public static void main(String[] args) {
     
 		Scanner in = new Scanner(System.in);
 		
 		int H = in.nextInt(); // 시
 		int M = in.nextInt(); // 분
-		
+	
 		
 		if(M < 45) {
 			H--;		// 시(hour) 1 감소
