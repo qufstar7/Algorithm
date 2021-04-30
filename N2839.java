@@ -8,7 +8,7 @@ public class N2839 {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int N = Integer.parseInt(br.readLine());
 
-		if (N == 1 || N == 2 || N == 4 || N == 7) { // 1,2,4,7 은 -1 출력
+		if (N == 1 || N == 2 || N == 4 || N == 7) { // 1,2,4,7 -1 출력
 			System.out.println("-1");
 		} else {
 			if (N % 5 == 0) { // 5로 나눠 떨어지면
