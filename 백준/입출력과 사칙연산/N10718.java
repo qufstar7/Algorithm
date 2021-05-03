@@ -4,7 +4,7 @@ public class N10718 {
 	
     public static void main(String[] args) {
     	
-        String A = "°­ÇÑÄ£±¸ ´ëÇÑÀ°±º";
+        String A = "Â°Â­Ã‡Ã‘Ã„Â£Â±Â¸ Â´Ã«Ã‡Ã‘Ã€Â°Â±Âº";
         System.out.println(A+"\n"+A);
                 
     }
