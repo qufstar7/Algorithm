@@ -1,4 +1,4 @@
-package BAEKJOON;
+package inputOutputAndFourRuleCalculataion;
 
 class N10171 {
 	
