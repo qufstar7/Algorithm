@@ -92,7 +92,7 @@ class Solution {
 * 여분의 체육복을 가진 학생 번호 -1 또는 +1과 일치하는 번호의 체육복을 잃어버린 학생이 있다면 두 학생의 번호를 0으로 바꿨다.  (print로 중간 확인)
 * 체육복을 잃어버린 학생들 중 번호가 0이 아닌 학생들의 수를 세서 cnt에 넣었다.  
 * 그리고 n-cnt의 값을 return
-###  풀이1.1 실행결과
+###  풀이1 실행결과
 * 정확성  테스트  
 테스트 1 〉	실패 (16.83ms, 53.8MB)  
 테스트 2 〉	통과 (21.35ms, 53.6MB)  
@@ -150,7 +150,7 @@ class Solution {
     }
 }
 ```
-###  풀이1.2 실행결과
+###  풀이2 실행결과
 * 정확성  테스트
   * 테스트 1 〉	실패 (0.03ms, 52.8MB)
   * 테스트 2 〉	실패 (0.03ms, 52MB)
@@ -169,3 +169,99 @@ class Solution {
   * 합계: 41.7 / 100.0   
 >> 이상하게 더 점수가 낮아졌다.   
 >> 맞았던 것도 틀리고 틀렸던 것도 맞은게 있다.
+
+## 풀이3
+```java
+import java.util.*;
+class Solution {
+    public int solution(int n, int[] lost, int[] reserve) {
+		// 여벌 가져온 학생이 도난 당했을 경우
+		for (int i = 0; i < reserve.length; i++) {
+			for (int j = 0; j < lost.length; j++) {
+				if (reserve[i] == lost[j]) {
+					lost[j] = -1;
+					reserve[i] = -1;
+				}
+			}
+		}
+
+		for (int i = 0; i < reserve.length; i++) {
+			for (int j = 0; j < lost.length; j++) {
+				// 체육복 빌려주기
+				if (reserve[i] - 1 == lost[j] || reserve[i] + 1 == lost[j]) {
+					lost[j] = -1;
+					reserve[i] = -1;
+				}
+			}
+		}
+        int cnt = 0;
+		for (int i = 0; i < lost.length; i++) {
+			if (lost[i] != -1) {
+				cnt++;
+			}
+		}
+		int answer = n - cnt; 
+		return answer;
+    }
+}
+```
+>> 초기화를 0이 아닌 -1로 바꿨다.  
+>> 학생의 번호가 0번일 수는 있어도 -1일수는 없다고 생각
+## 풀이3 결과
+* 정확성  테스트  
+테스트 1 〉	통과 (0.02ms, 52.1MB)  
+테스트 2 〉	통과 (0.03ms, 52.6MB)  
+테스트 3 〉	통과 (0.03ms, 52.5MB)  
+테스트 4 〉	통과 (0.05ms, 52.7MB)  
+테스트 5 〉	통과 (0.05ms, 52.2MB)  
+테스트 6 〉	통과 (0.02ms, 52MB)  
+테스트 7 〉	통과 (0.05ms, 51.9MB)  
+테스트 8 〉	통과 (0.01ms, 51.8MB)  
+테스트 9 〉	통과 (0.02ms, 53.1MB)  
+테스트 10 〉	통과 (0.05ms, 52.5MB)  
+테스트 11 〉	통과 (0.02ms, 53.1MB)  
+테스트 12 〉	통과 (0.02ms, 53.7MB)  
+* 채점 결과  
+정확성: 100.0  
+합계: 100.0 / 100.0  
+>> 전부 맞았다!!  
+>> 결론적으로 테스트케이스를 정확히 알 수는 없지만 학생들의 번호가 0인 케이스가 있다.  
+### 알고리즘 정리
+1. 여벌 가져온 학생이 도난 당했을 경우 자신의 체육복을 입게 하고
+2. 남은 학생들이 앞 또는 뒤 번호의 학생에게 체육복을 빌려준 뒤
+3. 전체 학생 수에서 체육복이 없는(빌리지 못한) 학생 수를 빼주면 답을 구할 수 있다.
+
+## 풀이4 (타인의 답)
+```java
+class Solution {
+    public int solution(int n, int[] lost, int[] reserve) {
+        int[] people = new int[n];
+        int answer = n;
+
+        for (int l : lost) 
+            people[l-1]--;
+        for (int r : reserve) 
+            people[r-1]++;
+
+        for (int i = 0; i < people.length; i++) {
+            if(people[i] == -1) {
+                if(i-1>=0 && people[i-1] == 1) {
+                    people[i]++;
+                    people[i-1]--;
+                }else if(i+1< people.length && people[i+1] == 1) {
+                    people[i]++;
+                    people[i+1]--;
+                }else 
+                    answer--;
+            }
+        }
+        return answer;
+    }
+}
+```
+* people[]배열을 생성하고  
+* lost[]과 reserve[]을 향상된 for문을 이용해 people배열에 1또는 -1을 넣고  
+* people[]배열의 요소가 -1일 경우 즉, lost배열에 해당하는 상황에
+  * people[i-1] ==1 이면( 앞사람이 체육복 여벌 o) 체육복을 빌려서, 줘서 people[i]++; people[i-1]--;  
+  * 또는 answer--;
+* 즉, 새로운 배열에 전체 학생들의 체육복 빌려주기 빌리기 여부를 넣고 빌리지 못한 경우 전체 학생 수 n에서 -1 해서 수업 가능한 학생 수를 구한다
