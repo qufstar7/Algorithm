@@ -90,14 +90,14 @@ class LinkedList:
         prev = self.getAt(pos-1)
         curr = self.getAt(pos)
         
-        if pos == 1: # 맨 앞 노드 삭제
-            if self.nodeCount==1:     #유일한 노드 삭제
+        if pos == 1:
+            if self.nodeCount==1:
                 self.head=None
                 self.tail=None
             self.head = curr.next
             curr.next = None
                                    
-        elif pos == self.nodeCount: # 맨 끝 노드 삭제
+        elif pos == self.nodeCount:
                 self.tail = prev
                 prev.next = None
         else: 
