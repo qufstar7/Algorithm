@@ -153,6 +153,26 @@ class Solution {
 >>라이브러리를 사용하지 않고 직접 구현하였다.(코테 고득점 가능)  
 >>퀵정렬 (분할정복, 순환호출) 사용해 i부터 j까지 범위의 배열을 빼내고 정렬하였다.
 
+## 풀이1 - python3
+```py
+def solution(array, commands):
+    answer = []       
+    count = 0
+    while count < len(commands) :        
+        x = commands[count][0]
+        y = commands[count][1]
+        z = commands[count][2]        
+        temp = array[x-1:y]
+        temp.sort()
+        answer.append(temp[z-1])        
+        count += 1    
+    return answer
+```
+## 풀이2 - python3
+```py
+def solution(array, commands):
+    return list(map(lambda x:sorted(array[x[0]-1:x[1]])[x[2]-1], commands))
+```
 
 # 퀵정렬
 * 찰스 앤터니 리처드 호어가 개발한 **정렬 알고리즘**
