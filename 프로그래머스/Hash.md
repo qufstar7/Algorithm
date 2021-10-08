@@ -313,8 +313,72 @@ class Solution {
 > 출처 : https://nordic.icpc.io/
 
 ## 알고리즘 풀이
-## 풀이
+## 풀이 1
+```py
+def solution(phone_book):
+    phone_book = sorted(phone_book)
 
+    for p1, p2 in zip(phone_book, phone_book[1:]):
+        if p2.startswith(p1):
+            return False
+    return True
+```
+* `sorted()`를 이용해 phone_book을 오름차순 정렬
+* `zip()`과 `startswith()`을 이용해 phone_book과 phone_book[1:]을 (phone_book 배열의 2번째 요소부터 슬라이싱한 것)을 비교한다. 
+  * 예시
+    ```
+    print(phone_book)    
+    print(phone_book[1:])
+    ['12', '123', '1235', '567', '88']
+    ['123', '1235', '567', '88']
+    ```
+    * phone_book과 phone_book[1:0]을 비교했을때 123은 12로 시작하므로 false
+* hash를 사용하지 않았지만 매우 문자 길이 상관없이 문자열 정렬 후 접두사를 비교하되 비교시 나머지 전화번호와 비교하는 것이 아닌 다음 전화번호와 비교하는 면에서 매우 간단하고 효율적이다.
+
+## 풀이 2
+```py
+def solution(phone_book):
+    answer = True
+    hash_map = {}
+    for phone_number in phone_book:
+        hash_map[phone_number] = 1
+    for phone_number in phone_book:
+        temp = ""
+        for number in phone_number:
+            temp += number
+            if temp in hash_map and temp != phone_number:
+                answer = False
+    return answer
+```
+* hash를 사용한 풀이 코드
+* 해시는 쉽게 말해 key 값을 해시 함수에 입력해서 해시 값을 리턴받은 뒤 해시 값을 주소로 하는 저장공간을 찾아 그 저장공간에 있는 값을 찾아 읽는 것이다.
+* 데이터를 아주 빠르게 삽입하거나 검색할 때 사용하는 기법으로 최소값이나 최댓값을 찾을 때(전체자료검색)는 효율이 떨어진다.
+* 파이썬의 딕셔너리는 해시테이블로 구현되어 있다
+* hash_map이라는 딕셔너리를 선언한다. `hash_map = {}`
+* phone_book 리스트의 요소를 phone_number로 hash_map[phone_number]를 1로 모두 초기화 한다. 즉 phone_number를 key 값으로 해시 결과 값은 1로 한다.
+* 그리고 중첩반복문을 통해 temp와 hash_map을 비교해 접두사가 같은 번호를 찾는다.
+* 예시 phone_book 과정에 따른 변수 변화.
+  ```
+  ["119", "97674223", "1195524421"]
+  phone_number= 119, temp = 119
+  number = 1, 1, 9
+  temp = 1, 11, 119
+  temp in hash_map (119 in hash_map) and temp != phone_number (119 != 119)
+  ```
+
+## 풀이 3
+* 해쉬를 사용하지 않았지만 풀이 2와 비슷한 방법
+```py
+def solution(phone_book) :
+    for phone in phone_book : 
+        temp = ''
+        for num in phone :
+            temp += num
+            if temp in phone_book and temp != phone : 
+                return False
+    return True
+```
+* 해쉬를 사용하지 않아 입력 데이터의 양이 적을 경우 더 효율적이다.
 
 
 # 문제 3. 위장(level 2)

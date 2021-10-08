@@ -279,3 +279,66 @@ numbers	return
    * 내림차순 정렬
    * [0, 0, 0, 0]과 같은 케이스대비 위해 `str(int())`사용
 
+
+# H-Index
+## 문제 설명
+H-Index는 과학자의 생산성과 영향력을 나타내는 지표입니다. 어느 과학자의 H-Index를 나타내는 값인 h를 구하려고 합니다. 위키백과1에 따르면, H-Index는 다음과 같이 구합니다.
+
+어떤 과학자가 발표한 논문 n편 중, h번 이상 인용된 논문이 h편 이상이고 나머지 논문이 h번 이하 인용되었다면 h의 최댓값이 이 과학자의 H-Index입니다.
+
+어떤 과학자가 발표한 논문의 인용 횟수를 담은 배열 citations가 매개변수로 주어질 때, 이 과학자의 H-Index를 return 하도록 solution 함수를 작성해주세요.
+
+## 제한사항
+과학자가 발표한 논문의 수는 1편 이상 1,000편 이하입니다.
+논문별 인용 횟수는 0회 이상 10,000회 이하입니다.
+
+## 입출력 예
+|citations|	return|
+|---|---|
+|[3, 0, 6, 1, 5]|	3|
+
+## 입출력 예 설명
+이 과학자가 발표한 논문의 수는 5편이고, 그중 3편의 논문은 3회 이상 인용되었습니다. 그리고 나머지 2편의 논문은 3회 이하 인용되었기 때문에 이 과학자의 H-Index는 3입니다.
+
+## 풀이
+* 1 <= n <= 1000
+* 0 <= 논문별 인용 횟수 <= 10000
+
+### 중간값 구하기
+```py
+def solution(citations):
+    citations.sort()
+    divLen = len(citations) / 2
+    shareLen = len(citations) // 2 
+    midIndex = 0
+    
+    if divLen == shareLen : 
+        midIndex = shareLen - 1
+    else : 
+        midIndex = shareLen
+    
+    h = citations[midIndex]
+            
+    answer = h
+    return answer
+```
+* 입출력 예시를 보고 위처럼 중간값을 구하는 식으로 풀어보았지만 틀렸다.
+* is_integer()와 같은 함수도 있다는 것을 알게 됐다.
+
+### H-Index 구하기 풀이
+```py
+def solution(citations):
+    citations.sort()
+    n = len(citations)
+    while True :
+        for i, value in enumerate(citations):
+            if value >= n and len(citations[i:]) >= n :
+                return n
+            else :
+                n -= 1
+```
+1. 정렬
+2. n 정의
+3. citations의 순서와 값을 구하는 반복문
+    * 만약 값이 n보다 크거나 같고 해당 값보다 더 큰 값을 가진 요소들의 개수들이 n 보다 크거나 같을 경우 n을 리턴
+    * 아니면 n 에서 1 뺀다.
