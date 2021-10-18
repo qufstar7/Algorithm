@@ -41,6 +41,14 @@
     - [입출력 예 #2](#입출력-예-2-2)
     - [입출력 예 #3](#입출력-예-3-2)
     - [제한시간 안내](#제한시간-안내)
+  - [내 풀이](#내-풀이)
+    - [결과](#결과)
+  - [다른 사람의 풀이 1](#다른-사람의-풀이-1)
+    - [결과](#결과-1)
+  - [다른 사람의 풀이 2](#다른-사람의-풀이-2)
+    - [결과](#결과-2)
+  - [다른 사람의 풀이 3](#다른-사람의-풀이-3)
+    - [결과](#결과-3)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -540,3 +548,155 @@ s|	result
 
 ### 제한시간 안내
 정확성 테스트 : 10초
+
+## 내 풀이
+```py
+import re
+def solution(s):
+    answer = 0
+
+    ans1 = re.sub('zero','0',s) 
+    ans2 = re.sub('one','1',ans1) 
+    ans3 = re.sub('two','2',ans2) 
+    ans4 = re.sub('three','3',ans3) 
+    ans5 = re.sub('four','4',ans4) 
+    ans6 = re.sub('five','5',ans5) 
+    ans7 = re.sub('six','6',ans6) 
+    ans8 = re.sub('seven','7',ans7) 
+    ans9 = re.sub('eight','8',ans8) 
+    ans10 = re.sub('nine','9',ans9) 
+
+    answer = int(ans10)
+    return answer
+```
+* re.sub를 이용해 문자열 변경
+* 각 알파벳 숫자마다 지정
+
+
+### 결과
+```
+정확성  테스트
+테스트 1 〉	통과 (0.28ms, 10.5MB)
+테스트 2 〉	통과 (0.47ms, 10.5MB)
+테스트 3 〉	통과 (0.29ms, 10.5MB)
+테스트 4 〉	통과 (0.46ms, 10.4MB)
+테스트 5 〉	통과 (0.51ms, 10.4MB)
+테스트 6 〉	통과 (0.47ms, 10.4MB)
+테스트 7 〉	통과 (0.46ms, 10.4MB)
+테스트 8 〉	통과 (0.44ms, 10.4MB)
+테스트 9 〉	통과 (0.31ms, 10.4MB)
+테스트 10 〉	통과 (0.30ms, 10.4MB)
+```
+* 느리다
+
+## 다른 사람의 풀이 1
+```py
+num_dic = {"zero":"0", "one":"1", "two":"2", "three":"3", "four":"4", "five":"5", "six":"6", "seven":"7", "eight":"8", "nine":"9"}
+
+def solution(s):
+    
+    for k, v in num_dic.items():
+        s = s.replace(k, v)
+    
+    return int(s)
+```
+* 딕셔너리.items(), replace()를 사용하여 풀이
+* 더 간략하고 쉽다.
+* 정규식 사용하지 않고 풀이
+
+### 결과
+```
+정확성  테스트
+테스트 1 〉	통과 (0.02ms, 10.4MB)
+테스트 2 〉	통과 (0.03ms, 10.5MB)
+테스트 3 〉	통과 (0.02ms, 10.3MB)
+테스트 4 〉	통과 (0.03ms, 10.3MB)
+테스트 5 〉	통과 (0.03ms, 10.4MB)
+테스트 6 〉	통과 (0.03ms, 10.5MB)
+테스트 7 〉	통과 (0.03ms, 10.4MB)
+테스트 8 〉	통과 (0.03ms, 10.4MB)
+테스트 9 〉	통과 (0.03ms, 10.3MB)
+테스트 10 〉	통과 (0.03ms, 10.4MB)
+```
+* 훨씬 빠르다.
+
+
+## 다른 사람의 풀이 2
+```py
+def solution(s):
+    words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+
+    for i in range(len(words)):
+        s = s.replace(words[i], str(i))
+
+    return int(s)
+```
+* 리스트, replace()를 사용하여 풀이
+* 좀 더 간략하고 쉽다.
+* 정규식, 딕셔너리 사용하지 않고 풀이
+
+### 결과
+```
+정확성  테스트
+테스트 1 〉	통과 (0.03ms, 10.3MB)
+테스트 2 〉	통과 (0.02ms, 10.4MB)
+테스트 3 〉	통과 (0.02ms, 10.4MB)
+테스트 4 〉	통과 (0.03ms, 10.4MB)
+테스트 5 〉	통과 (0.03ms, 10.3MB)
+테스트 6 〉	통과 (0.02ms, 10.4MB)
+테스트 7 〉	통과 (0.02ms, 10.4MB)
+테스트 8 〉	통과 (0.03ms, 10.4MB)
+테스트 9 〉	통과 (0.02ms, 10.4MB)
+테스트 10 〉	통과 (0.03ms, 10.3MB)
+```
+* 다른 사람의 풀이 1 과 비슷
+
+
+## 다른 사람의 풀이 3
+```py
+
+
+def solution(s):
+
+    eng = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+
+    if s.isdigit():
+        return int(s) # 바로리턴 
+
+    # 숫자면 넘어가고 문자열이라면 다음 숫자가 나올때까지 단어를 완성한다. 
+    # 문자열이 이어져있을수도 있으므로 한단어씩 문자열에 합칠때마다 eng배열에 존재하는지 확인하고 있으면 temp를 빈문자열로 초기화시킨다.
+
+    answer = ''
+    temp = ''
+    for i in s:
+        if i.isdigit():
+            answer+=i
+        # 문자열이면 
+        else:
+            temp += i
+            if temp in eng:
+                answer += str(eng.index(temp))
+                temp = ''
+
+    #print(answer)   
+    return int(answer)
+```
+* 처음 구현하고자했던 로직
+* 리스트와 조건문 반복문 사용
+* 복잡하다
+  
+### 결과
+```
+정확성  테스트
+테스트 1 〉	통과 (0.02ms, 10.3MB)
+테스트 2 〉	통과 (0.03ms, 10.4MB)
+테스트 3 〉	통과 (0.02ms, 10.4MB)
+테스트 4 〉	통과 (0.02ms, 10.5MB)
+테스트 5 〉	통과 (0.02ms, 10.4MB)
+테스트 6 〉	통과 (0.03ms, 10.4MB)
+테스트 7 〉	통과 (0.03ms, 10.3MB)
+테스트 8 〉	통과 (0.04ms, 10.4MB)
+테스트 9 〉	통과 (0.03ms, 10.4MB)
+테스트 10 〉	통과 (0.02ms, 10.4MB)
+```
+* 시간 비슷
