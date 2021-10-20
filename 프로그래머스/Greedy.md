@@ -299,3 +299,160 @@ name	return
 
 > 출처 https://commissies.ch.tudelft.nl/chipcie/archief/2010/nwerc/nwerc2010.pdf
 
+## 알고리즘 풀이  
+알파벳 이름을 왼쪽 문자부터 작성하고 맨 처음에 A로만 이루어져 있다.
+
+JAZ나 JAN과 같은 경우 J를 계산하고 ◀ 버튼을 누르면 3번째 문자로 커서가 이동한다.(맨 오른쪽 문자인 Z와 N) 3번째 문자를 계산하고 1번째 문자에서 3번째 문자로 커서를 이동시키기위해 누른 1번을 추가한다.
+
+정리하자면 조작 횟수를 구하려면
+1. 각 자리 문자를 설정하기 위한 조작 횟수를 더한다.
+2. 커서 이동 횟수를 더한다.
+
+* 알파벳에 각각 번호를 매기고 간단하지만 참고할 수 있게 정리
+```
+1~5  abcde
+6~10  fghij
+11~15 klmno
+16~20 pqrst
+21~25 uvwxy
+26 z
+```
+
+입출력 예시를 보자
+
+|name|return|
+|---|---|
+"JEROEN"|	56
+"JAN"|	23
+
+먼저 2번째 예제인 "JAN"을 계산해보자.
+
+|순서|문자 또는 커서이동|조작횟수|
+|---|---|---|
+1|J|▲ x 9
+2|J > N|◀ x 1
+3|N|▼ x 13
+
+이렇게 조작횟수는 26임을 알 수 있다.
+
+여기서 주의해야 할 점은 첫번째로 N을 설정할 경우 ▲보다 ▼를 눌러 이동하는 것이 1회 더 적게 조작할 수 있다(▲은 14, ▼은 13)는 것과 두번째로 A는 기본값 그대로 놔두면 되므로 알파벳 설정과 커서 이동이 필요하지 않다는 것이다.
+
+1번째 예제인 "JEROEN"을 계산해보자.
+
+|순서|문자 또는 커서이동|조작횟수|
+|---|---|---|
+1|J|▲ x 9
+2|J > E|▶ x 1
+3|E|▲ x 4
+4|E > R|▶ x 1
+5|R|▼ x 9
+6|R > O|▶ x 1
+7|O|▼ x 12
+8|O > E|▶ x 1
+9|E|▲ x 4
+10|E > N|▶ x 1
+11|N|▼ x 13
+
+조작횟수를 계산해보면 9+1+4+1+9+1+12+1+4+1+13=56임을 확인할 수 있다.
+
+위에서 정리한 조작횟수를 구하는 방법(각 알파벳 이동횟수 + 커서 이동횟수)과 일치한다.
+
+알고리즘을 짜기 위한 논리 일반화를 해보면
+1. A가 아닌 알파벳의 설정횟수를 구한다
+2. 총 문자의 수에서 -1 - A의 개수(총 커서 이동횟수)를 구한다.
+
+## 풀이 1
+위의 알고리즘 풀이에 기반하여 코드를 작성하였다.
+1. 커서이동횟수를 CursorMoves변수에 len(name) - 1 과 len(name)-1 -name.count('A') 로 계산하였다.
+2. 문자설정횟수를 ChrMoves 변수에 ord-65 과 13보다 클시 26 - (ord-65)으로 계산하였다.
+```py
+def solution(name):
+    
+    list(name)
+    ChrMoves = 0
+    for i in name:        
+        ordNum = ord(i)-65
+        if ordNum > 13 :
+            ordNum = 26 - ordNum        
+        ChrMoves += ordNum
+
+    CursorMoves = len(name)-1
+    if 'A' in name: 
+        CursorMoves = len(name)-1 -name.count('A')    
+    
+    answer = CursorMoves + ChrMoves
+    return answer
+```
+
+### 실행결과
+![joystick-1](image/joystick-1.png)
+위와같이 테스트케이스 2개는 성공하였다.
+
+하지만 채점시 테스트케이스 3,4,5,7,11에서 실패하였다.
+
+충분히 예상하였다. A가 여러개 들어있거나 복잡하게 섞여있을 경우 계산이 틀릴 것이라고 생각했었기 때문이다.
+
+## 풀이 1-2
+테스트 케이스를 몇 개 추가한 후 계산해보자.
+* 테스트 케이스 3 : "AAA" 
+  * A만 여러 개 있을 경우 조작 횟수의 최솟값은 당연히 0이다 하지만 위의 풀이1 코드에선 -1과 같은 음수가 나올 수 있다.
+  * 따라서 코드를 추가하였다.
+  ```py
+      if CursorMoves < 0:
+        CursorMoves = 0
+  ```
+* 테스트 케이스 4 : "JANA"
+  * A가 2개 들어 있고 A 중간에 문자가 있을 경우이다.
+  * 기댓값은 27이지만 결과는 23이 나왔다. 
+  * A를 설정하지 않아도 되지만 커서 이동을 위한 횟수는 추가해야 되기 때문에 숫자가 작게 나온 것이다.
+
+* 테스트 케이스 5 : "JAAN"
+
+* 테스트 케이스 6 : "BBAAAABB"
+  * A가 중간에 여러개 있을 경우
+  * A가 나올때까지 계산후 왼쪽으로 조이스틱을 조작해야 한다.
+  * 위의 기댓값은 8이다.
+
+테스트케이스 4와 5를 통해 알게 된것은 A가 여러개 있을 경우 계산이 잘못 될 수 있다는 것이다.
+
+또한 테스트케이스 6과 같은 경우 조이스틱 좌우 이동 계산시 크게 오차가 생긴다.
+
+커서 이동 횟수(좌우이동)를 계산하는 코드를 수정해야 한다.
+
+## 풀이 2
+```py
+def solution(name):
+    answer = 0
+    ChrMoves = 0
+    CursorMoves = len(name) - 1
+    next = 0
+    
+    for i, char in enumerate(name):
+        ChrMoves += min(ord(char) - 65, ord('Z') - ord(char) + 1)
+        
+        next = i + 1
+        while next < len(name) and name[next] == 'A':
+            next += 1
+        
+        PossibleMin = i + i + len(name) - next
+        CursorMoves = min(CursorMoves, PossibleMin)
+
+    answer = ChrMoves + CursorMoves
+    return answer
+```
+* "BBAAAABB"로 확인해보자.
+  * next = 2, next = 3 
+  * next = 3, next = 4 
+  * ... A가 4번 반복되므로 next = 6
+  * PossibleMin = 1 + 1 + 8 - 6 = 4
+  * CursorMoves = 7, 4중 최솟값이므로 4
+  * answer = 4 + 4 = 8
+
+### 수정사항
+* enumerate(name)을 이용해 인텍스와 chr를 추출하여 하나의 코드로 계산하였다.
+* min()을 이용하여 최소값을 사용하는 방식으로 코드를 간소화 하였다.
+* next변수에 각 알파벳 인덱스 값을 1부터로 하는 값을 저장하여 테스트케이스 6과 같은 경우를 계산할 수 있도록 코드를 짯다.
+  * 다음 문자가 A일 경우 next변수에 1을 더하고 A가 반복되는 만큼 반복한다.
+  * PossibleMin변수에 i+i+len(name)-next으로 계산한 값을 저장한다.
+  * 최솟값을 이용해 계산.
+
