@@ -346,35 +346,95 @@ no|	new_id|	result
 ```py
 import re
 def solution(new_id):
-    answer = ''
     
     step_1 = new_id.lower()
     print("step_1 : ", step_1)
+    
     step_2 = re.sub('[^a-z0-9-_.]', '', step_1)
     print("step_2 : ", step_2)
+    
     step_3 = re.sub('[.]{2,}', '.', step_2)
     print("step_3 : ", step_3)
+    
     step_4 = re.sub('^[.]|[.]$', '', step_3)
     print("step_4 : ", step_4)
-    step_5 = re.sub('[]', 'aaa', step_4)
+
+    step_5 = step_4
+    if len(step_5) == 0:
+        step_5 = 'a'    
     print("step_5 : ", step_5)
-    step_6_1 = ''
-    for i in step_5:
-        step_6_1 += i
-        if len(step_6_1) > 15 :
-            break        
+    
+    step_6_1 = step_5
+    if len(step_6_1) > 15:
+        step_6_1 = step_6_1[:15]   
     print("step_6_1 : ", step_6_1)
+    
     step_6_2 = re.sub('[.]$','', step_6_1)
-    # step_6 = re.sub('.*', '.*{15}', step_5)
     print("step_6_2 : ", step_6_2)
-    # step_7 = 
-    # print("step_7 : ", step_7)
-    
-    
-    return answer
+
+    step_7 = step_6_2
+    if len(step_7) > 2 :
+        step_7 = step_7
+    else :
+        for i in range(3 - len(step_6_2)):
+            step_7 = step_7 + "".join(step_6_2[-1])
+    print("step_7 : ", step_7)
+
+    return step_7
+```
+* 정규식 검색, 학습 후 활용.
+  * re 모듈사용
+  * [^a-z0-9-_.] : 문자클래스[]안에 제외하지 않을(^) 조건 입력
+    * (^)은 처음 문자를 의미하지만 []문자클래스 안에서는 반대라는 의미
+  * (.) dot은 \n을 제외한 모든 문자와 매치하지만 []안에서는 .점 그대로의 의미
+  * ($)는 마지막 문자 의미
+  * [:15] : 인덱싱, 슬라이싱 활용해 길이 제한
+  * join()을 활용해 부족한 문자 반복 추가
+    * 함수의 모양
+        ```
+        ''.join(리스트)
+
+        '구분자'.join(리스트)
+        ```
+    * 매개변수로 들어온 리스트에 있는 요소 하나하나를 합쳐서 하나의 문자열로 바꾸어 반환
+    * 구분자를 넣으면 구분자를 넣어 하나의 문자열로 합쳐준다. (위의 코드에서 구분자 사용 x) 안넣으면 구분자가 공백이 되는 것과 같다.
+
+### 간략화 버전
+```py
+import re
+def solution(new_id):      
+    n = new_id    
+    n = n.lower()  
+    n = re.sub('[^a-z0-9-_.]', '', n)   
+    n = re.sub('[.]{2,}', '.', n)
+    n = re.sub('^[.]|[.]$', '', n)
+    n = 'a' if len(n) == 0 else n[:15]    
+    n = re.sub('[.]$','', n)
+    n = n if len(n) > 2 else n + "".join([n[-1] for i in range(3-len(n))])
+    return n
 ```
 
 ## 내 풀이 2 - java
 ```java
-
+class Solution {
+    public String solution(String new_id) {
+        String n = new_id.toLowerCase();
+        n = n.replaceAll("[^-_.a-z0-9]", "");
+        n = n.replaceAll("[.]{2,}", ".");
+        n = n.replaceAll("^[.]|[.]$", "");
+        if(n.equals(""))
+            n = "a";
+        if(n.length() >= 16){
+            n = n.substring(0, 15);
+            n = n.replaceAll("[.]$", "");
+        }
+        if(n.length() <= 2)
+            while(n.length() < 3)
+                n += n.charAt(n.length() - 1);
+        return n;
+    }
+}
 ```
+* replaceAll()로 정규표현식 사용
+* substring으로 부분 분할(길이제한)
+* charAt()으로 마지막 문자 추가
