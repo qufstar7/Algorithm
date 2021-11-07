@@ -69,5 +69,69 @@ lottos|	win_nums|	result
 
 ## 풀이
 ```py
-
+def solution(lottos, win_nums):
+    answer = [1,1]
+    li = [] 
+    rank = [6,6,5,4,3,2,1] # 순위를 정하기 위한 배열 맞힌 개수(인덱스)에 따라 등수를 정함. (맞힌 개수가 0,1개면 6등, 2개면 5등, ...)
+    maximumValue = 0
+    minimumValue = 0
+    
+    # 0이 아닌 추첨 번호를 당첨 번호와 비교
+    # 비교위해 li에 일치하는 번호와 0을 저장
+    for i, a  in enumerate(lottos):
+        if a == 0 :
+            li.append(0)
+        for j, b in enumerate(win_nums):
+            if a == b :
+                li.append(a)
+    
+    # rank 리스트를 이용하여 최대 맞힌 개수와 최소 맞힌 개수를 구함.
+    maximumValue = rank[len(li)]
+    minimumValue = rank[len(li) - li.count(0)]
+    
+    answer = [maximumValue ,minimumValue]
+    return answer
 ```
+
+## 다른 사람의 풀이
+```py
+def solution(lottos, win_nums):
+
+    rank=[6,6,5,4,3,2,1]
+
+    cnt_0 = lottos.count(0)
+    ans = 0
+    for x in win_nums:
+        if x in lottos:
+            ans += 1
+    return rank[cnt_0 + ans],rank[ans]
+```
+
+### 풀이 비교, 정리
+내 풀이와 다른 사람의 풀이를 비교하면 순위를 비교하기 위해 리스트 [6,6,5,4,3,2,1]을 사용한 것은 같다.  
+하지만 훨씬 간소화되었다.
+* for문은 중첩해서 사용할 필요 없이 win_nums리스트의 요소를 lottos와 비교하여 존재 여부를 확인하면 되므로 
+  ```py
+  for x in win_nums:
+      if x in lottos:
+          
+  ```
+  와 같은 코드로 간소화하여 비교 가능하다.
+* 또한 최솟값을 구하기 위한 0의 개수(지워져 알수 없는 번호)를 알기만 하면 되므로 내가 만든 li리스트는 필요없다.
+  
+### 핵심 정리
+1. 순위를 매기기용 리스트 `rank = [6,6,5,4,3,2,1]` 활용
+2. 최댓값, 최솟값을 찾는 방법 - 일치하는 번호의 개수를 인덱스로 하는 리스트의 값(인덱스는 맞힌 번호 수, 값은 순위)
+   * 최댓값 : 0의 개수 + 일치하는 번호 수
+   * 최솟값 : 일치하는 번호 수
+3. `return rank[cnt_0 + val], rank[val]` : 실행 결과는 `3 5` 와 같이 정수가 띄어쓰기로 구분되어 리턴,  기대값은 리스트 형식 (`[3, 5]`)이어도 테스트 통과
+
+### 피드백 
+못한 것: 
+* enumerate는 필요없다 인덱스(추첨 또는 담첨 순서)는 필요하지 않기 때문
+* 하나의 for문에서 in을 쓰면 자바에서 중첩 반복문을 사용한 것처럼 요소의 존재를 확인할 수 있다.
+
+잘한 것:
+* rank리스트를 생각해낸 것. 
+  * 하다보니 구현할 수 있었다. 컨디션이 안좋았다면 활용할 생각이 나지 않았을 수도. 익숙해져야 한다. 
+  * 리스트의 인덱스와 값이 서로를 가리키는 역할을 할 수 있다. 따라서 이것을 활용하여 값을 순위로 인덱스를 순위에 해당하는 원인(맞힌 개수와 같은 정수)일 경우 활용도가 높다.
