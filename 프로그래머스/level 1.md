@@ -67,7 +67,7 @@ lottos|	win_nums|	result
 실제로 사용되는 로또 순위의 결정 방식과는 약간 다르지만, 이 문제에서는 지문에 명시된 대로 로또 순위를 결정하도록 합니다.  ↩
 
 
-## 풀이
+## 내 풀이 - python
 ```py
 def solution(lottos, win_nums):
     answer = [1,1]
@@ -135,3 +135,107 @@ def solution(lottos, win_nums):
 * rank리스트를 생각해낸 것. 
   * 하다보니 구현할 수 있었다. 컨디션이 안좋았다면 활용할 생각이 나지 않았을 수도. 익숙해져야 한다. 
   * 리스트의 인덱스와 값이 서로를 가리키는 역할을 할 수 있다. 따라서 이것을 활용하여 값을 순위로 인덱스를 순위에 해당하는 원인(맞힌 개수와 같은 정수)일 경우 활용도가 높다.
+
+## 내 풀이 2 - java
+* 위에서 정리한 핵심 정리를 참고하여 자바로 빠르게 구현해보자.
+```java
+class Solution {
+    public int[] solution(int[] lottos, int[] win_nums) {
+        
+        // answer 변수선언, 일치 번호 수 변수(same) 선언, 0 개수 카운트 
+        int[] answer = new int[2];
+        int same = 0;
+        int cnt_0 = 0;
+        for(int k = 0; k < lottos.length; k ++){ 
+            if (lottos[k] == 0) {
+                cnt_0++;
+            }
+        }        
+        
+        // 1. rank list
+        int[] rank = {6,6,5,4,3,2,1};
+            
+        // 2. max, min
+        for(int i = 0; i < win_nums.length; i ++){ 
+            for(int j = 0; j < lottos.length ; j ++){ 
+                if (lottos[j] == win_nums[i]) {
+                    same++;
+                }
+            }
+        }
+        
+        // 3. return
+        answer[0] = rank[cnt_0 + same];
+        answer[1] = rank[same];
+        return answer;
+    }
+}
+```
+
+### 파이썬 풀이와 비교
+1. 파이썬에서 활용한 rank리스트를 자바에서 rank int array로 활용하였다.
+   * 인덱스와 값은 맞힌 개수와 순위를 의미
+2. 파이썬의 in과 같은 기능이 없어 중첩 반복문으로 두 배열을 비교하여 일치하는 번호의 수를 구하였다. (same에 저장)
+3. 0의 개수 또한 for문과 if문을 사용하여 구하였다. (in의 부재)
+4. return 또한 파이썬처럼 정수, 정수와 같이 간단히 리턴할 수 없어 answer배열을 이용하여 값을 저장후에 answer배열을 리턴하였다.
+5. 그외 기본적인 알고리즘 풀이나 논리는 같다.
+
+## 다른 사람의 풀이'
+1. LongStream사용
+    ```java
+    import java.util.Arrays;
+    import java.util.stream.LongStream;
+
+    class Solution {
+        public int[] solution(int[] lottos, int[] winNums) {
+            return LongStream.of(
+                    (lottos.length + 1) - Arrays.stream(lottos).filter(l -> Arrays.stream(winNums).anyMatch(w -> w == l) || l == 0).count(),
+                    (lottos.length + 1) - Arrays.stream(lottos).filter(l -> Arrays.stream(winNums).anyMatch(w -> w == l)).count()
+            )
+                    .mapToInt(op -> (int) (op > 6 ? op - 1 : op))
+                    .toArray();
+        }
+    }
+    ```
+    가독성과 성능은 좋지 않지만 가장 간결한 코드. 2개의 클래스를 활용하였다.
+    * java.util.Arrays, java.util.stream.LongStream 사용
+    * `LongStream.of().mapToInt().toArray();` 클래스 틀(?)
+    * `Arrays.stream().filter().anyMatch().count()`를 2번 사용하여 최댓값, 최솟값을 계산.
+    * 람다식 활용. - 간결, 가독성 업 > 추가학습 필요.
+
+2. HashMap, Map 사용
+    ```java
+    import java.util.HashMap;
+    import java.util.Map;
+
+    class Solution {
+        public int[] solution(int[] lottos, int[] win_nums) {
+            Map<Integer, Boolean> map = new HashMap<Integer, Boolean>();
+            int zeroCount = 0;
+
+            for(int lotto : lottos) {
+                if(lotto == 0) {
+                    zeroCount++;
+                    continue;
+                }
+                map.put(lotto, true);
+            }
+
+
+            int sameCount = 0;
+            for(int winNum : win_nums) {
+                if(map.containsKey(winNum)) sameCount++;
+            }
+
+            int maxRank = 7 - (sameCount + zeroCount);
+            int minRank = 7 - sameCount;
+            if(maxRank > 6) maxRank = 6;
+            if(minRank > 6) minRank = 6;
+
+            return new int[] {maxRank, minRank};
+        }
+    }
+    ```
+    HashMap과 Map을 사용하여 성능이 압도적이고 가독성 또한 좋다. Map 대신 Set을 사용해도 된다.
+    * map에 일치하는 번호들을 저장하고 sameCount변수에 저장한다. 
+    * for each 문 : `for(int winNum : win_nums) {}` 활용도가 높으니 연습이 필요하다.
