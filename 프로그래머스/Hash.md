@@ -380,6 +380,84 @@ def solution(phone_book) :
 ```
 * 해쉬를 사용하지 않아 입력 데이터의 양이 적을 경우 더 효율적이다.
 
+## 자바
+## 알고리즘
+* 앞에서 부터 차례로 비교대상(a)으로 삼는다.
+* a가 바로 뒷 번호(b)로 시작하는지, 즉 b가 a의 접두어인지 확인한다.
+* 모든 요소를 비교하면서 접두어가 있으면 false를 return한다.
+## 풀이 1
+### 중첩 반복문을 이용한 상호 비교
+* 중첩 for문을 사용해서 모든 요소를 비교한다.
+* 2개의 조건문을 통해 a의 접두어가 b인지 b가 a의 접두어인지 교차비교한다.
+* 입출력 테스트를 위해 replaceAll()에 정규표현식을 활용해 입력값을 정리하였다.
+* 정리한 입력값의 앞에 " "공백이 있어 strip()을 활용하였다. (trim()도 가능하다.)
+#### strip() vs trim()
+* trim() - '\u0020' 이하의 공백들만 제거.
+* strip() - 유니코드의 공백들을 모두 제거.
+* trim()은 '\u2003' (EM SPACE)라는 공백을 제거할 수 없지만 strip()은 가능.
+* strip()에는 stripLeading(), stripTrailing()이라는 메서드도 있다.(java 11 이상)
+```java
+package hash;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class PhoneNumberList { // hash '전화번호 목록'
+	
+		public static String[] phone_book;
+
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));		
+		String str = br.readLine();
+		String intStr = str.replaceAll("[\"\\[\\]]", "");
+		phone_book = intStr.split(",");
+
+		for (int i = 0; i < phone_book.length; i++) {
+			phone_book[i] = phone_book[i].strip();
+		}		
+
+		System.out.println(solution(phone_book));
+	}
+
+	public static boolean solution(String[] phone_book) {	
+		// 하나씩 전체와 비교(중첩 for문)
+		for (int i = 0; i < phone_book.length - 1; i++) {
+			for (int j = i + 1; j < phone_book.length; j++) {
+				// 비교대상 b가 a의 접두어 인지 확인
+				if (phone_book[i].startsWith(phone_book[j])) {
+					return false;
+				}
+				// a가 b의 접두어 인지 확인
+				if (phone_book[j].startsWith(phone_book[i])) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+}
+```
+## 풀이 2
+### 모든 번호를 hashing하고 접두어를 찾는 방식.
+```java
+class Solution { public boolean solution(String[] phoneBook) { // 1. HashMap을 선언한다.
+    Map<String, Integer> map = new HashMap<>(); 
+    
+    // 2. 모든 전화번호를 HashMap에 넣는다. 
+    for (int i = 0; i < phoneBook.length; i++) map.put(phoneBook[i], i); 
+    
+    // 3. 모든 전화번호의 substring이 HashMap에 존재하는지 확인한다.     
+    for (int i = 0; i < phoneBook.length; i++)
+        for (int j = 0; j < phoneBook[i].length(); j++)
+            if (map.containsKey(phoneBook[i].substring(0, j)))
+                return false;
+    return true; 
+    } 
+}
+```
+
 
 # 문제 3. 위장(level 2)
 ## 문제 설명
