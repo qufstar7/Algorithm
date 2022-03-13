@@ -442,21 +442,55 @@ public class PhoneNumberList { // hash '전화번호 목록'
 ## 풀이 2
 ### 모든 번호를 hashing하고 접두어를 찾는 방식.
 ```java
-class Solution { public boolean solution(String[] phoneBook) { // 1. HashMap을 선언한다.
-    Map<String, Integer> map = new HashMap<>(); 
-    
-    // 2. 모든 전화번호를 HashMap에 넣는다. 
-    for (int i = 0; i < phoneBook.length; i++) map.put(phoneBook[i], i); 
-    
-    // 3. 모든 전화번호의 substring이 HashMap에 존재하는지 확인한다.     
-    for (int i = 0; i < phoneBook.length; i++)
-        for (int j = 0; j < phoneBook[i].length(); j++)
-            if (map.containsKey(phoneBook[i].substring(0, j)))
-                return false;
-    return true; 
-    } 
+package hash;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
+public class PhoneNumberList2 { // hash '전화번호 목록'
+
+	public static String[] phone_book;
+
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String str = br.readLine();
+		String intStr = str.replaceAll("[\"\\[\\]]", "");
+		phone_book = intStr.split(",");
+
+		for (int i = 0; i < phone_book.length; i++) {
+			phone_book[i] = phone_book[i].strip();
+		}
+
+		System.out.println(solution(phone_book));
+	}
+
+	public static boolean solution(String[] phoneBook) { // 1. HashMap을 선언한다.
+		Map<String, Integer> map = new HashMap<>();
+
+		// 2. 모든 전화번호를 HashMap에 넣는다.
+		for (int i = 0; i < phoneBook.length; i++)
+			map.put(phoneBook[i], i);
+
+		// 3. 모든 전화번호의 substring이 HashMap에 존재하는지 확인한다.
+		for (int i = 0; i < phoneBook.length; i++) {
+			for (int j = 0; j < phoneBook[i].length(); j++) {
+				if (map.containsKey(phoneBook[i].substring(0, j))) {
+					return false;
+                }
+			}
+		}
+		return true;
+	}
 }
+
 ```
+* Map타입의 map 참조변수에 HashMap 객체를 대입하여 사용.
+* 모든 전화번호를 map에 put()
+  * map에 `phoneBook[i]` 를 key로서 `i`를 value로서 넣는다. 
+* 중첩for문을 사용하여 모든 전화번호의 substring이 map에 존재하는지 확인.
 
 
 # 문제 3. 위장(level 2)
